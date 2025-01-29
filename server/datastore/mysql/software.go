@@ -2917,8 +2917,6 @@ func (ds *Datastore) SetHostSoftwareInstallResult(ctx context.Context, result *f
 }
 
 func getInstalledByFleetSoftwareTitles(ctx context.Context, qc sqlx.QueryerContext, hostID uint) ([]fleet.SoftwareTitle, error) {
-	// TODO(uniq): this only returns installed software, so no impact on upcoming queue
-
 	// We are overloading vpp_apps_count to indicate whether installed title is a VPP app or not.
 	const stmt = `
 SELECT
@@ -2965,7 +2963,6 @@ WHERE hvsi.removed = 0 AND ncr.status = :mdm_status_acknowledged
 }
 
 func markHostSoftwareInstallsRemoved(ctx context.Context, ex sqlx.ExtContext, hostID uint, titleIDs []uint) error {
-	// TODO(uniq): I think this only matters for non-pending installs, so no impact on upcoming queue
 	const stmt = `
 UPDATE host_software_installs hsi
 INNER JOIN software_installers si ON hsi.software_installer_id = si.id
@@ -2984,7 +2981,6 @@ WHERE hsi.host_id = ? AND st.id IN (?)
 }
 
 func markHostVPPSoftwareInstallsRemoved(ctx context.Context, ex sqlx.ExtContext, hostID uint, titleIDs []uint) error {
-	// TODO(uniq): I think this only matters for non-pending installs, so no impact on upcoming queue
 	const stmt = `
 UPDATE host_vpp_software_installs hvsi
 INNER JOIN vpp_apps vap ON hvsi.adam_id = vap.adam_id AND hvsi.platform = vap.platform
